@@ -76,7 +76,7 @@ const Navbar = () => {
               <li><a href="#biodata" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">Biodata</a></li>
               <li><a href="#pelayanan" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">Layanan</a></li>
               <li><a href="#news" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">News</a></li>
-              <li><a href="#portfolio" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">Portfolio</a></li>
+              {/* <li><a href="#portfolio" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">Portfolio</a></li> */}
               <li><a href="#galeri" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">Galeri</a></li>
               <li><a href="#kalender" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">Kalender Event</a></li>
               <li><a href="#kontak" className="font-medium opacity-75 hover:opacity-100 md:text-black text-white no-underline">Kontak</a></li>

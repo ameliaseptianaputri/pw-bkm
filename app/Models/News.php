@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class News extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'title',
-        'content',
         'image',
-        'detail_title',
-        'detail_description',
-        'detail_image',
-        'event_date'
+        'description',
+        'date',
     ];
-    
+    public function images()
+    {
+        return $this->hasMany(NewsImage::class);
+    }
 }

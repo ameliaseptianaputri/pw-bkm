@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Homepage from "./pages/HomePage";
 import SignIn from "./pages/SignIn";
 import "./../css/app.css";
+import NewsDetail from "./components/NewsDetail"; // Import dari folder pages
 import 'remixicon/fonts/remixicon.css';
 
 
@@ -19,18 +20,22 @@ function AppContent() {
   const location = useLocation();
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       {location.pathname !== "/signin" && <Navbar />}
 
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/signin" element={<SignIn />} />
-      </Routes>
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
+        </Routes>
+      </main>
 
       {location.pathname !== "/signin" && <Footer />}
     </div>
   );
 }
+
 
 // Root render dengan Router
 ReactDOM.createRoot(document.getElementById("app")).render(

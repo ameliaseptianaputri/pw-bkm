@@ -80,7 +80,7 @@ const Kontak = () => {
           <div className="w-full md:w-1/2 p-6 bg-white border border-gray-300 shadow-md shadow-gray-500 rounded-lg md:-mr-6">
             <div className="flex items-center space-x-3 mb-3">
               <i className="ri-mail-fill text-[#EFA720] font-bold text-xl"></i>
-              <p className="text-sm text-black">setiaporangbisa@gmail.com</p>
+              <p className="text-sm text-black">bintangkreasimultivision@gmail.com</p>
             </div>
             <div className="flex items-center space-x-3 mb-3">
               <i className="ri-phone-fill text-[#EFA720] font-bold text-xl"></i>

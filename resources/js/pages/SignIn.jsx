@@ -3,45 +3,41 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from '../api';
 
+import bg1 from '../assets/images/bg1.png';
+import bglogin from '../assets/images/bglogin.png';
+import logo from '../assets/images/logo.png';
+
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Jangan lupa preventDefault agar form tidak reload otomatis
-  
+    e.preventDefault();
+
     try {
-      // Memastikan CSRF cookie sudah diambil
       await axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie');
-      console.log('CSRF cookie di-set');
-  
-      // Kirim request login ke API
       const res = await api.post('/login', { email, password });
-      console.log('Login response:', res.data); // Cek response yang diterima 
       localStorage.setItem('authToken', res.data.access_token);
-      console.log('Token disimpan:', localStorage.getItem('authToken'));
-      console.log('Login sukses:', res.data); // Pastikan data diterima dengan benar
       alert(`Login berhasil`);
-      navigate('/'); // Arahkan ke halaman yang diinginkan setelah login
+      navigate('/');
     } catch (err) {
-      console.error('Login gagal:', err.response?.data); // Menampilkan error lebih detail di konsol
+      console.error('Login gagal:', err.response?.data);
       alert('Login gagal');
     }
   };
-  
-  
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/src/assets/images/bg1.png')" }}
+      style={{ backgroundImage: `url(${bg1})` }}
     >
       <div className="flex w-[800px] bg-white shadow-lg rounded-lg overflow-hidden">
         <div
           className="w-1/2 flex flex-col items-center justify-center bg-cover bg-center"
-          style={{ backgroundImage: "url('/src/assets/images/bglogin.png')" }}
+          style={{ backgroundImage: `url(${bglogin})` }}
         >
-          <img src="/logo.png" alt="Logo" className="w-32 mb-4" />
+          <img src={logo} alt="Logo" className="w-32 mb-4" />
           <p className="text-[#F1AA1F] font-bold text-sm text-center">
             Welcome to Bintang Kreasi Multivision
           </p>

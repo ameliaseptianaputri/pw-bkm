@@ -1,115 +1,158 @@
 import React, { useState, useEffect } from "react";
-import { FaEllipsisV, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import newsImg from "../assets/images/news.png";
+import { FaPlus, FaEdit, FaTrash, FaRegHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import api from "../api";
+import NewsForm from "./NewsForm";
 
 const News = () => {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [newsList, setNewsList] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
+    const [selectedNews, setSelectedNews] = useState(null);
+    const [selectedId, setSelectedId] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Contoh cek login pakai token dari localStorage
         const token = localStorage.getItem("authToken");
-        if (token) {
-            setIsLoggedIn(true);
-        }
+        if (token) setIsLoggedIn(true);
+        fetchNews();
     }, []);
-    return (
-        <div id="news" className="py-12 bg-white">
-            <div className="container mx-auto px-4">
-                {/* Header News dengan Dropdown */}
-                <div className="flex items-center justify-between mb-8 relative">
-                    <div className="flex items-center gap-3">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">
-                                News
-                            </h2>
-                            <h1 className="text-3xl font-bold text-black">
-                                Headings
-                            </h1>
-                        </div>
 
-                        {/* Dropdown Menu */}
+    const fetchNews = async () => {
+        try {
+            const res = await api.get("/news");
+            setNewsList(res.data);
+        } catch (err) {
+            console.error("Error fetching news:", err);
+        }
+    };
+
+    const handleOpenCreate = () => {
+        setIsEdit(false);
+        setSelectedNews(null);
+        setModalVisible(true);
+    };
+
+    const handleOpenEdit = (news) => {
+        setSelectedId(news.id);
+        setIsEdit(true);
+        setSelectedNews(news);
+        setModalVisible(true);
+    };
+
+    const handleUpdate = async (id, formData) => {
+        try {
+            await api.post(`/news/${id}?_method=PUT`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            fetchNews();
+            setModalVisible(false);
+        } catch (err) {
+            console.error("Error updating news:", err);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await api.delete(`/news/${id}`);
+            fetchNews();
+        } catch (err) {
+            console.error("Error deleting news:", err);
+        }
+    };
+
+    return (
+        <div className="w-full flex flex-col items-center py-10 bg-white">
+            {/* Heading */}
+            <div className="w-full max-w-6xl flex flex-col md:flex-row justify-between items-center px-4 mb-6">
+                <div className="text-left">
+                <h2 className="text-xl text-[#F1AA1F] font-semibold">News</h2>
+                <h1 className="text-2xl font-bold text-[#F1AA1F]">Bintang Kreasi Multivision</h1>
+                </div>
+                <div className="text-center text-sm text-gray-800 mt-2 md:mt-0">
+                    Merupakan bukti nyata kita telah menangani
+                    berbagai event
+                </div>
+                {isLoggedIn && (
+                    <button
+                        className="bg-[#F1AA1F] text-white p-2 rounded-full hover:bg-yellow-600 ml-4"
+                        onClick={handleOpenCreate}
+                    >
+                        <FaPlus />
+                    </button>
+                )}
+            </div>
+
+            <div className="w-full max-w-6xl border-t-2 border-[#F1AA1F] mb-8"></div>
+
+            {/* Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl px-4">
+                {newsList.map((news) => (
+                    <div
+                        key={news.id}
+                        className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg"
+                    >
+                        {/* Image */}
+                        <img
+                            src={news.image_url}
+                            alt={news.title}
+                            className="w-full h-full object-cover"
+                        />
+
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#F1AA1F] to-transparent"></div>
+
+                        {/* Admin buttons */}
                         {isLoggedIn && (
-                            <div className="relative">
-                                <FaEllipsisV
-                                    className="cursor-pointer text-gray-600 hover:text-gray-800"
-                                    onClick={() =>
-                                        setDropdownOpen(!dropdownOpen)
-                                    }
+                            <div className="absolute top-2 right-2 flex gap-2 z-20">
+                                <FaEdit
+                                    className="text-gray-600 cursor-pointer"
+                                    onClick={() => handleOpenEdit(news)}
                                 />
-                                {dropdownOpen && (
-                                    <div className="absolute left-0 mt-2 w-32 bg-white shadow-lg rounded-md border z-50">
-                                        <button
-                                            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                            onClick={() => alert("Create News")}
-                                        >
-                                            <FaPlus className="text-green-500" />{" "}
-                                            Create
-                                        </button>
-                                        <button
-                                            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                            onClick={() => alert("Edit News")}
-                                        >
-                                            <FaEdit className="text-blue-500" />{" "}
-                                            Edit
-                                        </button>
-                                        <button
-                                            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                            onClick={() => alert("Delete News")}
-                                        >
-                                            <FaTrash className="text-red-500" />{" "}
-                                            Delete
-                                        </button>
-                                    </div>
-                                )}
+                                <FaTrash
+                                    className="text-red-500 cursor-pointer"
+                                    onClick={() => handleDelete(news.id)}
+                                />
                             </div>
                         )}
-                    </div>
-                    <div className="w-1/2 text-gray-600 text-right font-bold">
-                        <p>
-                            News Heading merupakan bukti nyata kita telah
-                            menangani berbagai event
-                        </p>
-                    </div>
-                </div>
 
-                <div className="border-t-4 border-[#F1AA1F] mt-6"></div>
-
-                {/* News Cards */}
-                <div className="flex justify-between mt-8 space-x-10 relative">
-                    {[1, 2, 3, 4].map((item) => (
-                        <div key={item} className="relative w-1/3">
-                            <img
-                                src={newsImg}
-                                alt={`News ${item}`}
-                                className="w-full h-75 object-cover"
-                            />
-
-                            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-[#FFB300]"></div>
-                            <div className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold text-center px-4 translate-y-15">
-                                Lorem Ipsum dolor sit amet
-                            </div>
-
-                            {/* Tombol Edit di setiap foto */}
-                            {isLoggedIn && (
-                                <div className="absolute top-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer z-40">
-                                    <FaEdit
-                                        className="text-gray-600"
-                                        onClick={() => alert("Edit Image")}
-                                    />
-                                </div>
-                            )}
-                            {/* Tombol See More dan Like */}
-                            <div className="absolute bottom-2 left-4 flex items-center space-x-2 w-full justify-between pr-4">
-                                <button className="bg-white text-black px-4 py-2 text-xs font-semibold rounded-md">
-                                    See More
+                        {/* Content */}
+                        <div className="absolute bottom-0 w-full p-4 z-10 text-white">
+                            <h3 className="text-sm font-semibold mb-2">
+                                {news.title}
+                            </h3>
+                            <p className="text-xs line-clamp-3 leading-snug">
+                                {news.content}
+                            </p>
+                            <div className="flex justify-between items-center mt-3">
+                                <button
+                                    className="text-xs border border-white px-3 py-1 rounded-full hover:bg-white hover:text-[#F1AA1F] transition"
+                                    onClick={() =>
+                                        navigate(`/news/${news.id}`, {
+                                            state: news,
+                                        })
+                                    }
+                                >
+                                    See more
                                 </button>
-                                <span className="text-2xl">❤️</span>
+                                <FaRegHeart className="text-white text-sm" />
                             </div>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
+
+            {/* Modal Form */}
+            <NewsForm
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onSaved={fetchNews} // Change this to onSaved for refreshing the news list
+                isEdit={isEdit}
+                data={selectedNews}
+            />
         </div>
     );
 };
